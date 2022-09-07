@@ -84,25 +84,29 @@ export default {
                'Authorization' : 'Bearer '+token
                }
                axios.get(global.url+'api/auth/me',{headers: headers})
+
                     .then(response =>{
                     if(response.data){
                          this.user = response.data
-                         console.log(this.user);
                     }
                     })
+                    
                     .catch(error => {
                     console.log(error);
                });
 
      },
      updateUser(){
+          
         const form = new FormData();
           form.append("image", this.user.image);
-          form.append('oldPassword', this.user.oldPassword);
+          if(this.user.oldPassword){
+
+               form.append('oldPassword', this.user.oldPassword);
+          }
           form.append('newPassword', this.user.newPassword);
           form.append('fullname', this.user.fullname);
           form.append('email', this.user.email);
-
         //  form.append('e', this.color);
         
            const token = localStorage.getItem('token');
@@ -111,25 +115,49 @@ export default {
             'Authorization' : 'Bearer '+token
            }
 
-
-
-            axios.post(global.url+'api/auth/update',form,{headers: headers}).
-            then(res => {
-               console.log(res);
-
-            if(res.status == 200){
+           if(this.user.oldPassword == undefined && this.user.newPassword){
                Swal.fire({
-                        icon: 'success',
-                        title: 'Successfully UPDATED',
-                        })
-            }
-            else if(res.data.code == 400){
-                this.message = res.data.message
-            }
-            }).
-            catch(error => {
-            console.log(error);
-            }); 
+                        icon: 'error',
+                        title: 'Update User Failed',
+                        text: 'Old Password Invalid'
+           });
+          }
+
+           else if(this.user.newPassword == undefined && this.user.oldPassword){
+               Swal.fire({
+                        icon: 'error',
+                        title: 'Update User Failed',
+                        text: 'New Password Invalid'
+               });
+           }
+           else{
+
+                axios.post(global.url+'api/auth/update',form,{headers: headers}).
+                then(res => {
+                   console.log(res)
+                if(res.status == 201){
+                   Swal.fire({
+                            icon: 'success',
+                            title: 'Successfully UPDATED',
+                            })
+                }
+                else if(res.data.code == 400){
+                    console.log(res);
+                   Swal.fire({
+                            icon: 'error',
+                            title: 'Update User Failed',
+                            })     
+                   }
+                }).
+                catch(error => {
+                    console.log(error);
+                   Swal.fire({
+                            icon: 'error',
+                            title: 'Update User Failed',
+                            text: error.response.data.message,
+                   })  
+                }); 
+           }
      },
      fileChange(){
         this.user.image =  this.$refs.file.files[0];    

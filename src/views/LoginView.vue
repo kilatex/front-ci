@@ -21,7 +21,7 @@
                          <input type="password"  v-model="password" name="password" id="password" >
 
                          <div class="show-password">
-                              <input type="checkbox" id="show-password">
+                              <input type="checkbox" id="show-password" @click="showPassword()">
                               <label for="show-password">Show password</label>
                          </div>
                     </div>
@@ -40,6 +40,7 @@
 <script>
 // @ is an alias to /src
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import global from  '../global';
 export default {
   name: 'LoginView',
@@ -69,11 +70,24 @@ export default {
           }
           }).
           catch(error => {
+               Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Credentials',
+                    text: 'email or password not valid',
+                        })
           console.log(error);
           }); 
           
-     }
+     },
+     showPassword(){
+        const showPassword =   document.getElementById('password');
+        if(showPassword.type == 'password'){
+          showPassword.type = "text";
+        }else{
+          showPassword.type = "password";
+        }
   }
+}
 }
 </script>
 

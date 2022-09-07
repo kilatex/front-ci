@@ -27,13 +27,15 @@
 
           <div class="labels">
             <h3 class="title">Labels</h3>
+            <span v-if="labels.length >= 1">
+              <li  v-for="label in labels" v-bind:key="label">
 
-            <li>
-              <a href="http://agile-meadow-39302.herokuapp.com/labels/13">
-                <span class="material-icons-outlined icons"><i class="fas fa-tag"></i></span>
-                asdasd
-              </a>
-            </li>
+                
+                  <a :href="'/label/'+label.id"><span class="material-icons-outlined icons"><i class="fas fa-tag"></i></span>
+                    {{label.content}} </a>
+              </li>
+
+            </span>
 
             <li class="edit_label-bttn"  data-toggle="modal" data-target="#exampleModalCenter" >
               <button>
@@ -57,52 +59,39 @@
 </template>
 
 <script>
-import Swal from 'sweetalert2';
+import axios from 'axios';
 import ModalLabelComponent from './ModalLabelComponent.vue';
+import global from '../global'
+
     export default{
         components:{
           ModalLabelComponent
         },
         name: 'LateralMenuComponent',
-        methods: {
-          editLabel(){
-           Swal.fire({
-                      title: '<strong>Edit Labels:</strong>',
-                      html: `
-                           <form  class="form-labels home" id="alert-label-form">
-                               
-                                <div class="input-container">
-                                     <span class="material-icons-outlined"><i class="fas fa-plus"></i></span>
-                                     <input type="text" name="new_label" placeholder="Create new label..." class="create-input">
-                                </div>
-  
-                                    <div class="input-container alert-label-container"> 
-                                          <input type="text" name="id-labels[]" value="13" style="display:none;">
-                                          <input type="checkbox" id="del-13" name="delete-labels[]" value="13" style="display:none;" class="delete-checkbox">  
-                                          <input type="text" name="labels[]" id="label-13" value="asdasd">
-  
-                                          <label class="icons">
-                                               <span class="material-icons-outlined label-icon"><i class="fas fa-tag"></i></span>
-                                               <label for="del-13" class="material-icons delete-icon"><i class="fas fa-trash"></i></label>
-                                          </label>
-                                          <label for="label-13" class="material-icons-outlined icons edit"><i class="fas fa-edit"></i></label>
-                                     </div>
-                                                                 
-                                <div>
-                                     <input onclick="addLabel()" type="submit" value="Save">
-                                </div>
-                           </form>
-                      `,
-                      showCloseButton: true,
-                      showConfirmButton: false,
-                      customClass: {
-                           title: 'alert-title'
-                      },
-                 })
+        data() {
+          return {
+            labels: '',
+            token: localStorage.getItem('token'),
+          }
         },
-        addLabel(){
-          alert('messi');
-        }
+        mounted() {
+          this.getLabels();
+        },
+        methods: {
+           getLabels() {
+            let headers = {
+                'Authorization': 'Bearer ' +this.token
+            }
+            axios.get(global.url + 'api/label', { headers: headers })
+                .then(response => {
+                    if (response.data) {
+                        this.labels = response.data
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
         },
     }
 </script>

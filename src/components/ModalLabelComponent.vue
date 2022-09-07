@@ -72,7 +72,6 @@ export default {
             axios.get(global.url + 'api/label', { headers: headers })
                 .then(response => {
                     if (response.data) {
-                        console.log(response);
                         this.labels = response.data
                     }
                 })

@@ -10,9 +10,9 @@
             <div v-if="trash == true">
                 <button @click="emptyTrash" >Empty Trash Now</button>
             </div>
-            <form v-if="home == true" action="#" method="post" class="input-search">
-                <input type="text" name="search" id="note-name" placeholder="Search your notes"
-                    style="font-family:Arial, FontAwesome" value="" required>
+            <form v-if="home == true" @submit.prevent="search()" class="input-search">
+                <input type="text" v-model="noteToSearch" name="search" id="note-name" placeholder="Search your notes"
+                    style="font-family:Arial, FontAwesome"  required>
                 <button type="submit">
                     <span class="material-icons-outlined"><i class="fas fa-arrow-right"></i></span>
                 </button>
@@ -65,7 +65,8 @@ import global from '../global';
         props: ['user','trash','home'],
         data(){
             return {
-                url : global.url
+                url : global.url,
+                noteToSearch: ''
             }
         },
         methods:{
@@ -112,6 +113,9 @@ import global from '../global';
                      
                 }
             })  
+            },
+            search(){
+                window.location.href = '/search/'+this.noteToSearch;
             }
         },
         mounted(){

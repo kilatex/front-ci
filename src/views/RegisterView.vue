@@ -25,7 +25,7 @@
                             <input type="password" v-model="password" name="password" id="password" required>
 
                             <div class="show-password">
-                                <input type="checkbox" id="show-password">
+                                <input type="checkbox" @click="showPassword()" id="show-password">
                                 <label for="show-password">Show password</label>
                             </div>
                         </div>
@@ -33,17 +33,19 @@
                         <div class="input-container">
                             <label for="confirm-password">Confirm Password:</label>
                             <span class="material-icons icon"><i class="fas fa-lock"></i></span>
-                            <input type="password" v-model="passwordConfirm" name="confirm_password" id="confirm-password" required>
+                            <input type="password" v-model="passwordConfirm" name="confirm_password" id="confirm_password" required>
 
                             <div class="show-password">
-                                <input type="checkbox" id="show-confirm-password">
+                                <input type="checkbox" @click="showConfirmPassword()"  id="show-confirm-password">
                                 <label for="show-confirm-password">Show password</label>
                             </div>
                         </div>
 
                         <div class="input-container sumbit">
                             <input type="submit" value="Sign up">
-                            <a href="http://agile-meadow-39302.herokuapp.com/login" class="create-account">Sign in instead</a>
+                            <router-link to="/login" class="create-account">
+                                Sign in instead
+                            </router-link>
                         </div>
                 </form>
             </div>
@@ -83,7 +85,7 @@ export default{
        
                 axios.post('http://127.0.0.1:8000/api/auth/register',form).
                 then(res => {
-                    console.log(res.status);
+                    console.log(res);
                     if(res.status == 201){
                         Swal.fire({
                         icon: 'success',
@@ -93,15 +95,48 @@ export default{
                         this.$router.push({ name: 'login'}) 
                     }
                     else if(res.data.code == 400){
-                        this.message = res.data.message
+                        Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Credentials',
+                        text: 'Please Register again',
+                        })
                     }
                 }).
                 catch(error => {
                     console.log(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Credentials',
+                        text: error.response.data,
+                    })
                 }); 
+            }else{
+                
+                Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Credentials',
+                        text: "Passwords don't match",
+                        })
             }
 
+        },
+        showPassword(){
+            const showPassword =   document.getElementById('password');
+            if(showPassword.type == 'password'){
+            showPassword.type = "text";
+            }else{
+            showPassword.type = "password";
             }
+        },
+        showConfirmPassword(){
+            const showPassword =   document.getElementById('confirm_password');
+            if(showPassword.type == 'password'){
+            showPassword.type = "text";
+            }else{
+            showPassword.type = "password";
+            }
+        },
+        
     }
 }
 </script>

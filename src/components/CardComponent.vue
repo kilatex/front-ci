@@ -6,18 +6,25 @@
         <div>
 
             <div class="card" :style="{background: note.color}">
-       
-                    <router-link :to="'/note/'+note.id">
-                        <h3>{{note.title}}</h3>
-                      <div class="content">
-                            {{note.string}}
-                      </div>
-                      
-                    </router-link>
-               
+                
+                <router-link v-if="!this.$route.params.id" :to="'/note/'+note.id">
+                    <h3>{{note.title}}</h3>
+                  <div class="content">
+                        {{note.string}}
+                  </div>
+                  
+                </router-link>
+                <router-link v-else :to="'/note/'+note.note_id">
+                    <h3>{{note.title}}</h3>
+                  <div class="content">
+                        {{note.string}}
+                  </div>
+                  
+                </router-link>
+                
                  
-                 <div class="tags-container">
-                </div>
+                    <div class="tags-container">
+                    </div>
        
                  
                  <div class="icons">
@@ -37,6 +44,10 @@
     </div>
    
           
+</section>
+
+<section v-else-if="notes.length == 0">
+    <h2>There are no notes</h2>
 </section>
 
 </template>
@@ -71,8 +82,17 @@ export default {
             url = global.url+'api/trash';
             this.typeNotes = "trash";
         }
-        else{
+         if (this.$route.path == "/home"){
             url = global.url+'api/note';
+            this.typeNotes = "home";
+        }
+         if (this.$route.path == "/label/"+this.$route.params.id){
+            url = global.url+'api/notes-by-label/'+this.$route.params.id;
+            this.typeNotes = "home";
+        }
+         if (this.$route.path == "/search/"+this.$route.params.text){
+            url = global.url+'api/note-search/'+this.$route.params.text;
+
             this.typeNotes = "home";
         }
       const token = localStorage.getItem('token');
@@ -83,11 +103,11 @@ export default {
             axios.get(url,{headers: headers})
                  .then(response =>{
                     if(response.data){
-                        console.log(response);
                         this.notes = response.data
                     }
                  })
                 .catch(error => {
+
                   console.log(error);
                 });
     },

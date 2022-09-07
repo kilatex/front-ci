@@ -91,7 +91,7 @@ import global from '../global';
                         this.$router.push('/home'); 
                         Swal.fire({
                                 icon: 'success',
-                                title: 'Note Resotred',
+                                title: 'Note Restored',
                         })
                     }
                 })

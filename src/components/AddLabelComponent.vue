@@ -10,44 +10,22 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="http://agile-meadow-39302.herokuapp.com/notes/37/add_label" class="form-labels" method="post">
-                              <input type="hidden" name="_token" value="URfpO9CpxItVRUiMgdxNKm9Thx3kVtxgAF2dkRh6">                              <input type="hidden" name="_method" value="put">                              <div class="input-container">
-                                   <span class="material-icons-outlined">&#xe145;</span>
+                    <form @submit.prevent="setLabels()" class="form-labels" >
+                         <div class="input-container">
+                                   <span class="material-icons-outlined"><i class="fas fa-plus"></i></span>
                                    <input type="text" name="new_label" placeholder="Create new label..." class="create-input">
                               </div>
+                                <div v-if="labels.length >= 1">
 
-                                                                 <div class="input-container alert-label-container">
-                                        <label for="label-18">
-                                             <span class="material-icons-outlined">&#xe892;</span>
-                                             sadgasdgasdgasdgasdg
-                                        </label>
-                                        
-                                        <input type="checkbox" name="labels[]" id="label-18" value="18" >
-                                   </div>
-                                                                 <div class="input-container alert-label-container">
-                                        <label for="label-14">
-                                             <span class="material-icons-outlined">&#xe892;</span>
-                                             asdgasdgasd
-                                        </label>
-                                        
-                                        <input type="checkbox" name="labels[]" id="label-14" value="14"  checked >
-                                   </div>
-                                                                 <div class="input-container alert-label-container">
-                                        <label for="label-16">
-                                             <span class="material-icons-outlined">&#xe892;</span>
-                                             dsfghsdagasdg
-                                        </label>
-                                        
-                                        <input type="checkbox" name="labels[]" id="label-16" value="16"  checked >
-                                   </div>
-                                                                 <div class="input-container alert-label-container">
-                                        <label for="label-21">
-                                             <span class="material-icons-outlined">&#xe892;</span>
-                                             1123123
-                                        </label>
-                                        
-                                        <input type="checkbox" name="labels[]" id="label-21" value="21"  checked >
-                                   </div>
+                                    <div v-for="label in labels" v-bind:key="label" class="input-container alert-label-container">
+                                            <label :for="'label_'+label.id">
+                                                 <span class="material-icons-outlined"><i class="fas fa-tag"></i></span>
+                                                 {{label.content}}
+                                            </label>
+                                            
+                                            <input type="checkbox" name="labels[]" :id="'label_'+label.id"  >
+                                    </div>
+                                </div>
                               
                               <div>
                                    <input type="submit" value="Save">
@@ -71,13 +49,22 @@ export default {
         return {
             token: localStorage.getItem('token'),
             labels: '',
-            newLabel: ''
+            newLabel: '',
+            labelsToSet: []
         }
     },
     mounted() {
         this.getLabels();
     },
     methods: {
+        getLabelsChecked(){
+            this.labels.forEach(label => {
+            var isChecked = document.getElementById('label_'+label.id);
+            if(isChecked.checked){
+                this.labelsToSet.push(label.id);
+            }
+            });
+        },
         getLabels() {
             let headers = {
                 'Authorization': 'Bearer ' + this.token
@@ -85,7 +72,6 @@ export default {
             axios.get(global.url + 'api/label', { headers: headers })
                 .then(response => {
                     if (response.data) {
-                        console.log(response);
                         this.labels = response.data
                     }
                 })
@@ -119,6 +105,27 @@ export default {
                     console.log(error);
                 });
         },
+        setLabels(){
+            let headers = {
+                'Authorization': 'Bearer ' + this.token
+            }
+            const id = this.$route.params.id;
+           this.getLabelsChecked();
+           let json = JSON.stringify(this.labelsToSet);
+           let params = 'json='+json;
+           axios.post(global.url+'api/set-label/'+id, params, { headers: headers } )
+                .then(() =>{
+                    Swal.fire({
+                            icon: 'success',
+                            title: 'Successfully Added',
+                        })
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+
+
+        }
      
     },
 }

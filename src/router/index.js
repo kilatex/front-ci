@@ -5,6 +5,8 @@ import HomeView from '../views/HomeView.vue'
 import CreateNoteView from '../views/CreateNoteView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import TrashView from '../views/TrashView.vue'
+import NotesByLabelView from '../views/NotesByLabelView.vue'
+import SearchNotesView from '../views/SearchNotesView.vue'
 
 const routes = [
   {
@@ -46,7 +48,17 @@ const routes = [
     path: '/trash',
     name: 'TrashView',
     component: TrashView
-  }
+  },
+  {
+    path: '/label/:id',
+    name: 'NotesByLabelView',
+    component: NotesByLabelView
+  },
+  {
+    path: '/search/:text',
+    name: 'SearchNotesView',
+    component: SearchNotesView
+  },
 
 ]
 

@@ -65,10 +65,11 @@
             <div class="editor-container">
                 <quill-editor id="editor" ></quill-editor>
             </div>
-            <div v-if="noteId" class="label-container">
+            <div v-if="labels" class="label-container">
                     <h3>Labels:</h3>
-                         <a href="http://agile-meadow-39302.herokuapp.com/labels/18" class="label">sadgasdgasdgasdgasdg</a>
-                         <a href="http://agile-meadow-39302.herokuapp.com/labels/14" class="label">asdgasdgasd</a>
+                    <span  v-for="label in labels" v-bind:key="label" >
+                        <button class="label">{{label.label.content}}</button>
+                    </span>
                     <button class="material-icons-outlined add-bttn" id="add-bttn" data-toggle="modal" data-target="#addLabelComponent"> <i class="fas fa-plus"></i></button>
             </div>
 
@@ -96,7 +97,9 @@ export default {
             string:'',
             color: '#f3f3f3',
             messi: '',
-            noteId: ''
+            noteId: '',
+            labels: '',
+            idNote : this.$route.params.id
         }
     },
     components: {
@@ -105,6 +108,7 @@ export default {
     },
     mounted(){
         this.getNote();
+        this.getLabelsNote();
     },
     methods: {
         createNote(){
@@ -164,19 +168,18 @@ export default {
             document.querySelector('#colorsOption').classList.toggle('active');
         },
         getNote(){
-            const  idNote = this.$route.params.id;
             if(this.$route.params.id){
 
                 const token = localStorage.getItem('token');
                 let headers = {
                   'Authorization' : 'Bearer '+token
                 }
-                axios.get(global.url+'api/note/'+idNote,{headers: headers})
+                axios.get(global.url+'api/note/'+this.idNote,{headers: headers})
                      .then(response =>{
                         if(response.data){
                             this.html = document.querySelector('#editor .ql-editor').innerHTML = response.data.html;
                             this.title =  response.data.title;
-                            this.noteId = response.data.title
+                            this.noteId = response.data.id
                             this.changeColor(response.data.color);
                         }
                      })
@@ -185,7 +188,6 @@ export default {
                     }); 
             }
         },
-
         updateNote(){
         this.html = document.querySelector('#editor .ql-editor').innerHTML;
         this.string = document.querySelector('#editor .ql-editor').textContent;
@@ -222,6 +224,22 @@ export default {
             console.log(error);
             }); 
         },
+        getLabelsNote(){
+            
+            const token = localStorage.getItem('token');
+                let headers = {
+                  'Authorization' : 'Bearer '+token
+                }
+                axios.get(global.url+'api/labels-by-note/'+this.idNote,{headers: headers})
+                     .then(response =>{
+                        if(response.data.labelsNote){
+                            this.labels = response.data.labelsNote;
+                        }
+                     })
+                    .catch(error => {
+                      console.log(error);
+                    }); 
+        }
     }
 }
 </script>
