@@ -29,9 +29,8 @@
                  
                  <div class="icons">
                        
-                      <a href="http://agile-meadow-39302.herokuapp.com/notes/22">
-                           <span class="material-icons-outlined"><i class="fas fa-arrow-right"></i></span>
-                      </a>
+                    <router-link :to="'/note/'+note.id">   <span class="material-icons-outlined"><i class="fas fa-arrow-right"></i></span></router-link>
+
                       <div class="options">
                            <button @click="openOptions(note.id)" class="material-icons-outlined dropdown-menu-bttn"><i class="fas fa-ellipsis-v"></i></button>
                         </div>

@@ -7,7 +7,6 @@
                                 Note</button>
                         </form>
     
-                        <button href="http://agile-meadow-39302.herokuapp.com/notes/25/" class="menu-item">Add label</button>
                         <button @click="copyNote()" class="menu-item">Make a
                             copy</button>
                 </div>
