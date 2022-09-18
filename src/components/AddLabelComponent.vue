@@ -10,10 +10,10 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form @submit.prevent="setLabels()" class="form-labels" >
+                    <form @submit.prevent="addLabels()" class="form-labels" >
                          <div class="input-container">
                                    <span class="material-icons-outlined"><i class="fas fa-plus"></i></span>
-                                   <input type="text" name="new_label" placeholder="Create new label..." class="create-input">
+                                   <input type="text" name="new_label" id="newLabel" v-model="newLabel" placeholder="Create new label..." class="create-input">
                               </div>
                                 <div v-if="labels.length >= 1">
 
@@ -23,7 +23,7 @@
                                                  {{label.content}}
                                             </label>
                                             
-                                            <input type="checkbox" name="labels[]" :id="'label_'+label.id"  >
+                                            <input name="labeltoSet" :value="label.id" type="radio" :id="'label_'+label.id"  >
                                     </div>
                                 </div>
                               
@@ -55,16 +55,14 @@ export default {
     },
     mounted() {
         this.getLabels();
+        document.getElementById('newLabel').addEventListener('click',()=>{
+           const isChecked = document.querySelector('input[name="labeltoSet"]:checked');
+           if(isChecked){
+                isChecked.checked = null;
+           }
+        });
     },
     methods: {
-        getLabelsChecked(){
-            this.labels.forEach(label => {
-            var isChecked = document.getElementById('label_'+label.id);
-            if(isChecked.checked){
-                this.labelsToSet.push(label.id);
-            }
-            });
-        },
         getLabels() {
             let headers = {
                 'Authorization': 'Bearer ' + this.token
@@ -79,7 +77,46 @@ export default {
                     console.log(error);
                 });
         },
-        addLabel() {
+        addLabels() {
+            if(this.newLabel.trim() != ""){
+                this.createLabels();
+            }else if(this.newLabel.trim() == ""){
+                this.setLabels();
+            }
+        },
+        setLabels(){
+            let headers = {
+                'Authorization': 'Bearer ' + this.token
+            }
+            const id = this.$route.params.id;
+            const label_id = document.querySelector('input[name="labeltoSet"]:checked').value;
+            const form = new FormData();
+            form.append('label_id', label_id);
+    
+           axios.post(global.url+'api/set-label/'+id, form, { headers: headers } )
+                .then((res) =>{
+                    if(res.data.code==200){
+
+                        Swal.fire({
+                                icon: 'success',
+                                title: 'Successfully Added',
+                            })
+                            this.emitNewLabels();
+
+                    }else{
+
+                        Swal.fire({
+                                icon: 'error',
+                                title: 'This label already exists',
+                            })
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+
+        },
+        createLabels(){
             const form = new FormData();
            form.append('content', this.newLabel);
             const token = localStorage.getItem('token');
@@ -90,41 +127,31 @@ export default {
             axios.post(global.url + 'api/label-create', form, { headers: headers }).
 
                 then(res => {
-                    if (res.status == 200) {
+                    console.log(res);
+                    if (res.data.code == 200) {
                         this.getLabels();
                         Swal.fire({
                             icon: 'success',
                             title: 'Successfully Created',
                         })
+                        this.emitNewLabels();
                     }
-                    else if (res.data.code == 400) {
-                        this.message = res.data.message
+                    else if(res.data.code == 400){
+                        Swal.fire({
+                    icon: 'error',
+                    title: 'Error to create',
+                    text: 'Label already exists',
+                        })
                     }
                 }).
                 catch(error => {
+               
                     console.log(error);
                 });
         },
-        setLabels(){
-            let headers = {
-                'Authorization': 'Bearer ' + this.token
-            }
-            const id = this.$route.params.id;
-           this.getLabelsChecked();
-           let json = JSON.stringify(this.labelsToSet);
-           let params = 'json='+json;
-           axios.post(global.url+'api/set-label/'+id, params, { headers: headers } )
-                .then(() =>{
-                    Swal.fire({
-                            icon: 'success',
-                            title: 'Successfully Added',
-                        })
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-
-
+     
+        emitNewLabels(){
+            this.$emit('emitNewLabels', true);
         }
      
     },

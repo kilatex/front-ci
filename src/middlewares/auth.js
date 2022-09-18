@@ -18,7 +18,6 @@ function isAuth ()  {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           if(data.error == "400"){
             window.location.href = url+"login";
           }

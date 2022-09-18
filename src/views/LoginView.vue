@@ -10,7 +10,7 @@
                <form  @submit.prevent="login()">
                     <input type="hidden" name="_token" value="u0esqjjxb0bazlZns1YEgXKQFjuWTjVXPKzLzDb8">
                     <div class="input-container">
-                         <label for="email">Email:</label>
+                         <label for="email">Email: </label>
                          <span class="material-icons icon"><i class="fas fa-envelope"></i></span>
                          <input type="email" name="email"  v-model="email"  id="email" >
                     </div>
@@ -53,7 +53,7 @@ export default {
      },
   methods:{
      login(){
-          
+       
 
           const form = new FormData();
           form.append('email', this.email);
@@ -85,7 +85,7 @@ export default {
           showPassword.type = "text";
         }else{
           showPassword.type = "password";
-        }
+     }
   }
 }
 }

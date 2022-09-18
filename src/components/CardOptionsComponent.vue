@@ -2,11 +2,11 @@
 
                 <div class="dropdown" v-if="typeNotes == 'home'">
                         <form   @submit.prevent="deleteNote()">
-                            <input type="hidden" name="_token" value="jrfdLjJLYUreTPYI4yRikafxky6W93x8QTmpUou1"> <input
-                                type="hidden" name="_method" value="delete"> <button type="submit" class="menu-item">Delete
+                             <button type="submit" class="menu-item">Delete
                                 Note</button>
                         </form>
-    
+                        
+                        <router-link :to="'note/'+note_id" class="menu-item">Add Labels</router-link>
                         <button @click="copyNote()" class="menu-item">Make a
                             copy</button>
                 </div>

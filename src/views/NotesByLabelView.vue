@@ -7,7 +7,7 @@
       
       
   
-          <card-component></card-component>
+          <card-component :notesByLabel="notesByLabel"></card-component>
   
             <router-link to="/create" class="add-note-bttn" role="button"><i class="fas fa-plus"></i> </router-link>
         
@@ -29,7 +29,8 @@
     name: 'NotesByLabelview',
     data(){
       return{
-        user: ''
+        user: '',
+        notesByLabel: true
       }
     },
     components:{
@@ -59,7 +60,7 @@
                     console.log(error);
                   });
       },
-      
+
       }
     }
   </script>
