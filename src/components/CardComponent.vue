@@ -47,7 +47,7 @@
                         </div>
                     </div>
                 </div>
-                <card-options-component :typeNotes="typeNotes" :note_id="note.id" :id="'options_'+note.id"></card-options-component>
+                <card-options-component @emitNewNote="newNoteCopied" :typeNotes="typeNotes" :note_id="note.id" :id="'options_'+note.id"></card-options-component>
        
        
         </div>
@@ -180,7 +180,10 @@ export default {
             .catch(error => {
             console.log(error);
             });
-        },
+    },
+    newNoteCopied(){
+        this.getNotes();
+    }
     },
    
 }

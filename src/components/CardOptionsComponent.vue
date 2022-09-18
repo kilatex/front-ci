@@ -106,17 +106,20 @@ import global from '../global';
             axios.get(global.url+'api/copy/'+this.note_id,{headers: headers})
                 .then(response =>{
                     if(response.data){
-                        console.log(response);
                         Swal.fire({
                                 icon: 'success',
                                 title: 'Note Copied',
-                        })
+                        });
+                        this.emitNewNote();
                     }
                 })
                 .catch(error => {
                 console.log(error);
                 });
         },
+        emitNewNote(){
+            this.$emit('emitNewNote', true);
+        }
         }
     }
    
